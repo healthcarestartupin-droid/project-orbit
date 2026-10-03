@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@supabase/supabase-js";
+import { randomUUID } from "crypto";
 
 // Initialize Supabase client strictly on the server
 // Requires NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SECRET_KEY
@@ -59,12 +60,13 @@ export async function submitExperience(data: SubmitData) {
     const finalRole = validRoles.includes(role) ? role : "other";
 
     const { error: dbError } = await supabase.from("submissions").insert({
+      id: randomUUID(),
       role: finalRole,
       problem_text: message,
       improvement_text: solution || null,
       source: "web_anonymous_discovery",
       consent_version: "v1",
-      // id and created_at handled by Postgres defaults
+      // created_at handled by Postgres defaults
     });
 
     if (dbError) {
